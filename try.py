@@ -1,10 +1,13 @@
-from __future__ import print_function
+#!/usr/bin/env python3
+
+"""
+https://eleccelerator.com/wiki/index.php?title=DualShock_4
+"""
 
 import hid
 import time
 
 # enumerate USB devices
-
 for d in hid.enumerate():
     keys = list(d.keys())
     keys.sort()
@@ -13,7 +16,6 @@ for d in hid.enumerate():
     print()
 
 # try opening a device, then perform write and read
-
 try:
     print("Opening the device")
 
@@ -27,16 +29,24 @@ try:
     # enable non-blocking mode
     h.set_nonblocking(1)
 
+    feature_report = h.get_feature_report(0x12, 255)
+
+    bytes = list(reversed(feature_report))
+    remote_mac = bytes[0:6]
+
+    for byte in remote_mac:
+        print(format(byte, "02x"))
+
     # write some data to the device
-    #print("Write the data")
-    #h.write([0, 63, 35, 35] + [0] * 61)
+    # print("Write the data")
+    # h.write([0, 63, 35, 35] + [0] * 61)
 
     # wait
-    #time.sleep(0.05)
+    # time.sleep(0.05)
 
     # read back the answer
-    #print("Read the data")
-    #while True:
+    # print("Read the data")
+    # while True:
     #    d = h.read(64)
     #    if d:
     #        print(d)
@@ -48,8 +58,6 @@ try:
 
 except IOError as ex:
     print(ex)
-    print("You probably don't have the hard-coded device.")
-    print("Update the h.open() line in this script with the one")
-    print("from the enumeration list output above and try again.")
+
 
 print("Done")
